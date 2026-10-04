@@ -1,6 +1,6 @@
 # Multi-Platform Setup Guide
 
-> Agentic QE supports 11 coding agent platforms via MCP (Model Context Protocol).
+> Agentic QE supports 12 coding agent platforms via MCP (Model Context Protocol), including Pi via manual setup.
 > This guide covers setup for all platforms.
 
 ## Quick Setup
@@ -39,6 +39,24 @@ npx agentic-qe platform verify copilot
 | OpenAI Codex CLI | `.codex/config.toml` | TOML | `AGENTS.md` | `.codex/` |
 | Windsurf | `.windsurf/mcp_config.json` | JSON | `.windsurfrules` | `.windsurf/` |
 | Continue.dev | `.continue/config.yaml` | YAML | `.continue/rules/aqe-qe-standards.yaml` | `.continue/` |
+| Pi | `~/.pi/agent/mcp.json` or `.pi/mcp.json` | JSON | Pi Agent Skills | Manual |
+
+## Pi
+
+Pi connects to AQE through its built-in MCP client. Install the MCP server from npm and the Pi skills directly from the `jcpowermac/agentic-qe` GitHub fork's `feat/pi-aqe-skills` branch:
+
+```bash
+npm install -g agentic-qe
+pi mcp add agentic-qe --exposure deferred -- aqe-mcp
+curl -fsSL https://raw.githubusercontent.com/jcpowermac/agentic-qe/feat/pi-aqe-skills/scripts/install-pi-skills.sh | sh
+pi mcp list
+```
+
+The installer downloads only the skill files from that branch into Pi's user skill directory; it does not clone the repository or install the repository's npm dependencies. Set `PI_CODING_AGENT_DIR` first if Pi uses a non-default agent directory. The MCP command writes user-level configuration by default; use `pi mcp add -l agentic-qe --exposure deferred -- aqe-mcp` for project scope (Pi project trust applies).
+
+The server uses deferred tool discovery, and the skills guide Pi to search for the matching AQE tool and inspect its schema. Restart Pi or run `/reload` after installation. See the [Pi skills README](../plugins/agentic-qe-fleet/pi-skills/README.md) for details.
+
+> Pi setup is manual; `aqe init --with-all-platforms` and `aqe platform setup pi` do not currently configure it.
 
 ---
 
